@@ -16,15 +16,16 @@ interface Post {
 }
 
 export async function getStaticPaths() {
-  // Cridar l'API amb filtre per idioma anglès
+  // Cridar l'API per obtenir articles en anglès
   const res = await fetch(
     import.meta.env.API_BASE_URL + "articles?language=en"
   );
   const posts = await res.json();
 
+  // Generar rutes per a articles en anglès
   return posts.map((post: Post) => ({
     params: { slug: post.slug },
-    props: { post }, // Passar les dades com props
+    props: { post },
   }));
 }
 
@@ -35,7 +36,7 @@ console.error(" Building route for slug:", post.slug);
 console.error("✅ Post data received:", post.title);
 ---
 
-<Layout title={post.title} description={post.excerpt}>
+<Layout title={post.title} description={post.excerpt} currentLang="en">
   <article class="prose max-w-4xl mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-6">{post.title}</h1>
 

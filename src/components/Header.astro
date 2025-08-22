@@ -1,88 +1,124 @@
 ---
 import LanguageSelector from "./LanguageSelector.astro";
 
-// Props per a l'idioma actual
+// Props per a l'idioma actual i slug de l'article
 export interface Props {
   currentLang?: string;
+  currentSlug?: string;
 }
 
-const { currentLang = "es-ES" } = Astro.props;
+const { currentLang = "es-ES", currentSlug } = Astro.props;
 
-// Mapeig d'idiomes per a les URLs
-const langMap = {
-  "es-ES": { code: "es", name: "ES", path: "" },
-  "ca-ES": { code: "ca", name: "CA", path: "/ca" },
-  en: { code: "en", name: "EN", path: "/en" },
-};
+// Obtenir la ruta actual per determinar si estem en un article
+const currentPath = Astro.url.pathname;
+const isArticlePage = currentPath.includes("/blog/");
 
-// Obtenir l'idioma actual
-const currentLangInfo =
-  langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
+// Si estem en un article i no tenim slug, intentar extreure'l de la URL
+let articleSlug = currentSlug;
+if (isArticlePage && !articleSlug) {
+  const pathSegments = currentPath.split("/");
+  const blogIndex = pathSegments.indexOf("blog");
+  if (blogIndex !== -1 && pathSegments[blogIndex + 1]) {
+    articleSlug = pathSegments[blogIndex + 1];
+  }
+}
 ---
 
-<header
-  class="bg-white shadow-sm hidden lg:block fixed top-0 left-0 w-full z-50"
->
-  <div class="w-full px-4 py-6 flex items-center justify-between">
-    <div
-      class="flex-1 flex items-center space-x-6 text-base text-gray-800 justify-start ml-0"
-    >
-      <a href={currentLangInfo.path + "/"} class="hover:underline"
-        >Tu sueño, a tu alcance</a
-      >
-      <a href={currentLangInfo.path + "/"} class="font-bold underline"
-        >Encuentra a tu próxima estrella</a
-      >
+<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-32 lg:h-40">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href="/" class="text-2xl font-bold text-gray-900"> SportsMatch </a>
+      </div>
+
+      <!-- Navegació desktop -->
+      <nav class="hidden lg:flex space-x-8">
+        <a
+          href="/"
+          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+        >
+          Inicio
+        </a>
+        <a
+          href="/blog"
+          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+        >
+          Blog
+        </a>
+        <a
+          href="/about"
+          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+        >
+          Sobre nosotros
+        </a>
+        <a
+          href="/contact"
+          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+        >
+          Contacto
+        </a>
+      </nav>
+
+      <!-- Selector d'idioma i botó mobile -->
+      <div class="flex items-center space-x-4">
+        <LanguageSelector currentLang={currentLang} currentSlug={articleSlug} />
+
+        <!-- Botó mobile menu -->
+        <button
+          class="lg:hidden rounded-md p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+          id="mobile-menu-button"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="flex justify-center flex-shrink-0">
-      <img src="/assets/logo.png" alt="SportsMatch Logo" class="h-12" />
+    <!-- Navegació mobile -->
+    <div class="lg:hidden hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a
+          href="/"
+          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+        >
+          Inicio
+        </a>
+        <a
+          href="/blog"
+          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+        >
+          Blog
+        </a>
+        <a
+          href="/about"
+          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+        >
+          Sobre nosotros
+        </a>
+        <a
+          href="/contact"
+          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+        >
+          Contacto
+        </a>
+      </div>
     </div>
-
-    <div class="flex-1 flex items-center justify-end space-x-4 text-base mr-4">
-      <LanguageSelector currentLang={currentLang} />
-      <a href={currentLangInfo.path + "/blog"} class="">Blog</a>
-      <button class="bg-gray-800 text-white px-4 py-1 rounded-full"
-        >Pregúntanos</button
-      >
-    </div>
-  </div>
-</header>
-
-<header class="bg-white shadow-sm lg:hidden">
-  <div class="w-full px-4 py-4 flex items-center justify-between">
-    <img src="/assets/logo.png" alt="SportsMatch Logo" class="h-10" />
-
-    <div class="flex items-center space-x-4">
-      <LanguageSelector currentLang={currentLang} />
-      <button class="bg-gray-800 text-white px-3 py-1 rounded-full"
-        >Pregúntanos</button
-      >
-      <button
-        class="text-gray-800 text-3xl focus:outline-none"
-        id="mobile-menu-button"
-      >
-        ☰
-      </button>
-    </div>
-  </div>
-
-  <div
-    class="hidden flex-col items-start space-y-4 mt-4 px-4 text-gray-800 text-lg"
-    id="mobile-menu"
-  >
-    <a href={currentLangInfo.path + "/"} class="hover:underline"
-      >Tu sueño, a tu alcance</a
-    >
-    <a href={currentLangInfo.path + "/"} class="hover:underline"
-      >Encuentra a tu próxima estrella</a
-    >
-    <a href={currentLangInfo.path + "/blog"} class="hover:underline">Blog</a>
   </div>
 </header>
 
 <script>
-  // Toggle del menú mòbil
+  // Funcionalitat del menú mobile
   const mobileMenuButton = document.getElementById("mobile-menu-button");
   const mobileMenu = document.getElementById("mobile-menu");
 

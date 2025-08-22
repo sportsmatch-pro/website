@@ -8,6 +8,7 @@ export interface Props {
   currentLang?: string;
   showHeader?: boolean;
   showFooter?: boolean;
+  currentSlug?: string; // Afegir slug de l'article
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   currentLang = "es-ES",
   showHeader = true,
   showFooter = true,
+  currentSlug, // Afegir slug
 } = Astro.props;
 
 // Mapeig d'idiomes per a les URLs
@@ -84,7 +86,11 @@ const metaLang =
   </head>
 
   <body class="min-h-screen bg-white">
-    {showHeader && <Header currentLang={currentLang} />}
+    {
+      showHeader && (
+        <Header currentLang={currentLang} currentSlug={currentSlug} />
+      )
+    }
 
     <!-- Spacer per al header fixe -->
     {showHeader && <div class="h-32 lg:h-40" />}

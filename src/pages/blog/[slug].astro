@@ -16,26 +16,29 @@ interface Post {
 }
 
 export async function getStaticPaths() {
-  // Cridar l'API amb filtre per idioma espanyol
-  const res = await fetch(
-    import.meta.env.API_BASE_URL + "articles?language=es-ES"
-  );
+  // Cridar l'API per obtenir tots els articles
+  const res = await fetch(import.meta.env.API_BASE_URL + "articles");
   const posts = await res.json();
 
+  // Generar una ruta per a cada article (només una vegada)
   return posts.map((post: Post) => ({
     params: { slug: post.slug },
-    props: { post }, // Passar les dades com props
+    props: { post, allPosts: posts }, // Passar tots els posts per fallbacks
   }));
 }
 
 // Les props es reben automàticament
-const { post } = Astro.props as { post: Post };
+const { post, allPosts } = Astro.props as { post: Post; allPosts: Post[] };
 
 console.error(" Building route for slug:", post.slug);
 console.error("✅ Post data received:", post.title);
 ---
 
-<Layout title={post.title} description={post.excerpt}>
+<Layout
+  title={post.title}
+  description={post.excerpt}
+  currentLang={post.language}
+>
   <article class="prose max-w-4xl mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-6">{post.title}</h1>
 
