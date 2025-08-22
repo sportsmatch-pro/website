@@ -20,21 +20,30 @@ const currentLangInfo =
 
 // Si estem en un article, obtenir els idiomes disponibles
 let availableLanguages: string[] = [];
-if (currentSlug) {
-  // Cridar l'API per obtenir tots els articles i trobar els disponibles per a aquest slug
-  try {
-    const res = await fetch(import.meta.env.API_BASE_URL + "articles");
-    const articles = await res.json();
+let translationSlugs: { [key: string]: string } = {};
 
-    // Trobar articles amb el mateix slug
-    const articlesWithSameSlug = articles.filter(
-      (article: any) => article.slug === currentSlug
+if (currentSlug) {
+  // Cridar l'API per obtenir l'article amb les seves traduccions
+  try {
+    const res = await fetch(
+      import.meta.env.API_BASE_URL +
+        `articles/slug/${currentSlug}?language=${currentLang}`
     );
-    availableLanguages = articlesWithSameSlug.map(
-      (article: any) => article.language
-    );
+    const data = await res.json();
+
+    if (data.article && data.translations) {
+      // L'idioma actual sempre està disponible
+      availableLanguages.push(currentLang);
+      translationSlugs[currentLang] = currentSlug;
+
+      // Afegir els idiomes de les traduccions disponibles
+      data.translations.forEach((translation: any) => {
+        availableLanguages.push(translation.language);
+        translationSlugs[translation.language] = translation.slug;
+      });
+    }
   } catch (error) {
-    console.error("Error fetching articles for language detection:", error);
+    console.error("Error fetching article translations:", error);
     // Si hi ha error, mostrar tots els idiomes
     availableLanguages = Object.keys(langMap);
   }
@@ -49,6 +58,7 @@ if (currentSlug) {
   id="language-selector"
   data-current-lang={currentLang}
   data-current-slug={currentSlug}
+  data-translation-slugs={JSON.stringify(translationSlugs)}
 >
   {
     Object.entries(langMap).map(([key, lang]) => {
@@ -76,39 +86,88 @@ if (currentSlug) {
   ) as HTMLSelectElement;
   const currentSlug = languageSelector?.dataset.currentSlug;
 
+  // Obtenir els slugs de traducció des del servidor
+  const translationSlugs = JSON.parse(
+    languageSelector?.dataset.translationSlugs || "{}"
+  );
+
+  // Funció helper per obtenir el codi complet de l'idioma
+  function getFullLanguageCode(shortLang: string): string {
+    switch (shortLang) {
+      case "es":
+        return "es-ES";
+      case "ca":
+        return "ca-ES";
+      case "en":
+        return "en";
+      default:
+        return shortLang;
+    }
+  }
+
   if (languageSelector) {
     languageSelector.addEventListener("change", (e) => {
       const target = e.target as HTMLSelectElement;
       const newPath = target.value;
+      const newLang = target.options[target.selectedIndex].text
+        .split(" ")[0]
+        .toLowerCase();
 
-      // Obtenir la ruta actual
-      const currentPath = window.location.pathname;
+      // Si estem en un article, intentar navegar a la traducció
+      if (currentSlug) {
+        // Obtenir l'idioma complet del nou idioma seleccionat
+        const newLangFull = getFullLanguageCode(newLang);
 
-      // Separar la ruta en segments
-      const segments = currentPath.split("/").filter((segment) => segment);
+        // Buscar si tenim el slug per a aquest idioma
+        if (translationSlugs[newLangFull]) {
+          // Navegar directament a la traducció
+          let newUrl;
+          if (newPath) {
+            newUrl = newPath + "/blog/" + translationSlugs[newLangFull];
+          } else {
+            newUrl = "/blog/" + translationSlugs[newLangFull];
+          }
+          window.location.href = newUrl;
+          return;
+        }
 
-      // Si la ruta comença amb idioma, l'eliminem
-      if (segments[0] === "ca" || segments[0] === "en") {
-        segments.shift();
-      }
-
-      // Construir la nova ruta
-      let newUrl;
-      if (newPath) {
-        // Afegir el nou idioma al principi
-        newUrl = newPath + "/" + segments.join("/");
+        // Si no hi ha traducció, fallback a la lògica anterior
+        fallbackNavigation(newPath);
       } else {
-        // Sense idioma (espanyol)
-        newUrl = "/" + segments.join("/");
+        // Si no estem en un article, usar la lògica normal
+        fallbackNavigation(newPath);
       }
-
-      // Assegurar-nos que comença amb /
-      if (!newUrl.startsWith("/")) {
-        newUrl = "/" + newUrl;
-      }
-
-      // Redirigir
-      window.location.href = newUrl;
     });
+  }
+
+  function fallbackNavigation(newPath: string) {
+    // Obtenir la ruta actual
+    const currentPath = window.location.pathname;
+
+    // Separar la ruta en segments
+    const segments = currentPath.split("/").filter((segment) => segment);
+
+    // Si la ruta comença amb idioma, l'eliminem
+    if (segments[0] === "ca" || segments[0] === "en") {
+      segments.shift();
+    }
+
+    // Construir la nova ruta
+    let newUrl;
+    if (newPath) {
+      // Afegir el nou idioma al principi
+      newUrl = newPath + "/" + segments.join("/");
+    } else {
+      // Sense idioma (espanyol)
+      newUrl = "/" + segments.join("/");
+    }
+
+    // Assegurar-nos que comença amb /
+    if (!newUrl.startsWith("/")) {
+      newUrl = "/" + newUrl;
+    }
+
+    // Redirigir
+    window.location.href = newUrl;
   }
 </script>
