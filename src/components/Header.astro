@@ -1,5 +1,6 @@
 ---
 import LanguageSelector from "./LanguageSelector.astro";
+import HeaderLogoIcon from "./HeaderLogoIcon.astro";
 
 // Props per a l'idioma actual i slug de l'article
 export interface Props {
@@ -29,19 +30,16 @@ const translations = {
   "es-ES": {
     home: { text: "SPORTSMATCH", href: "/" },
     blog: { text: "Blog", href: "/blog" },
-    about: { text: "Sobre nosotros", href: "/about" },
     contact: { text: "Contacto", href: "/contact" },
   },
   "ca-ES": {
     home: { text: "SPORTSMATCH", href: "/ca" },
     blog: { text: "Blog", href: "/ca/blog" },
-    about: { text: "Sobre nosaltres", href: "/ca/about" },
     contact: { text: "Contacte", href: "/ca/contact" },
   },
   en: {
     home: { text: "SPORTSMATCH", href: "/en" },
     blog: { text: "Blog", href: "/en/blog" },
-    about: { text: "About us", href: "/en/about" },
     contact: { text: "Contact", href: "/en/contact" },
   },
 };
@@ -56,8 +54,14 @@ const t =
     <div class="flex justify-between items-center h-32 lg:h-40">
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href={t.blog.href} class="text-2xl font-bold text-gray-900">
-          {t.home.text}
+        <a href={t.home.href} class="flex items-center">
+          <HeaderLogoIcon
+            width={140}
+            height={105}
+            color="#000"
+            secondaryColor="#999"
+            accentColor="#000"
+          />
         </a>
       </div>
 
@@ -68,12 +72,6 @@ const t =
           class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
         >
           {t.blog.text}
-        </a>
-        <a
-          href={t.about.href}
-          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-        >
-          {t.about.text}
         </a>
         <a
           href={t.contact.href}
@@ -116,22 +114,10 @@ const t =
     <div class="lg:hidden hidden" id="mobile-menu">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         <a
-          href={t.home.href}
-          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
-        >
-          {t.home.text}
-        </a>
-        <a
           href={t.blog.href}
           class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
         >
           {t.blog.text}
-        </a>
-        <a
-          href={t.about.href}
-          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
-        >
-          {t.about.text}
         </a>
         <a
           href={t.contact.href}
