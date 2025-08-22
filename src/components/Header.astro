@@ -52,19 +52,6 @@ const t =
 <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-32 lg:h-40">
-      <!-- Logo -->
-      <div class="flex-shrink-0">
-        <a href={t.home.href} class="flex items-center">
-          <HeaderLogoIcon
-            width={140}
-            height={105}
-            color="#000"
-            secondaryColor="#999"
-            accentColor="#000"
-          />
-        </a>
-      </div>
-
       <!-- Navegació desktop -->
       <nav class="hidden lg:flex space-x-8">
         <a
@@ -81,6 +68,19 @@ const t =
         </a>
       </nav>
 
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href={t.home.href} class="flex items-center">
+          <HeaderLogoIcon
+            width={140}
+            height={105}
+            color="#000"
+            secondaryColor="#999"
+            accentColor="#000"
+          />
+        </a>
+      </div>
+
       <!-- Selector d'idioma i botó mobile -->
       <div class="flex items-center space-x-4">
         <LanguageSelector
@@ -88,6 +88,21 @@ const t =
           currentSlug={articleSlug}
           translationRoutes={translationRoutes}
         />
+        <!-- Navegació desktop -->
+        <nav class="hidden lg:flex space-x-8">
+          <a
+            href={t.blog.href}
+            class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+          >
+            {t.blog.text}
+          </a>
+          <a
+            href={t.contact.href}
+            class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+          >
+            {t.contact.text}
+          </a>
+        </nav>
 
         <!-- Botó mobile menu -->
         <button

@@ -1,0 +1,87 @@
+---
+export interface Props {
+  title: string;
+  text: string;
+  images: string[];
+  imagePosition: "left" | "right";
+  background: "black" | "white";
+  textColor: "black" | "white";
+}
+
+const { title, text, images, imagePosition, background, textColor } =
+  Astro.props;
+
+const flexDirection =
+  imagePosition === "left" ? "flex-row-reverse" : "flex-row";
+const bgClass = background === "black" ? "bg-black" : "bg-white";
+const textClass = textColor === "white" ? "text-white" : "text-black";
+const titleCenterClass = title.toLowerCase().includes("tu sueño")
+  ? "text-center"
+  : "";
+---
+
+<section
+  class={`${bgClass} w-screen lg:h-screen lg:flex items-center justify-center`}
+>
+  <div class={`lg:flex ${flexDirection} w-full lg:h-full`}>
+    <!-- Contingut de text -->
+    <div class="lg:w-1/2 h-full p-8 flex flex-col justify-between">
+      <div class={`${textClass} ${titleCenterClass} px-8 py-12`}>
+        <h2 class={`text-6xl mb-12 whitespace-pre-line ${titleCenterClass}`}>
+          {title}
+        </h2>
+        <div class={`text-3xl mt-4 ${titleCenterClass}`}>
+          {text}
+        </div>
+      </div>
+    </div>
+
+    <!-- Imatge amb carrusel -->
+    <div class="lg:w-1/2 h-full relative overflow-hidden">
+      <!-- Per ara usem una imatge placeholder -->
+      <div
+        class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center"
+      >
+        <div class="text-center">
+          <div class="text-6xl mb-4">🏃‍♂️</div>
+          <div class="text-xl text-gray-600">Imatge del esport</div>
+        </div>
+      </div>
+
+      <!-- Botons de navegació del carrusel -->
+      <button
+        class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"
+      >
+        <svg
+          class="w-6 h-6 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <button
+        class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"
+      >
+        <svg
+          class="w-6 h-6 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,156 @@
+---
+import LogoIcon from "./LogoIcon.astro";
+---
+
+<style>
+  /* Estils específics per a DeportesSlider */
+  .sport-transition {
+    transition: all 0.5s ease-in-out;
+  }
+
+  .hero-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .arrow-button {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .arrow-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+</style>
+
+<div
+  class="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black"
+>
+  <!-- Imatge de fons dinàmica -->
+  <img
+    id="sport-background"
+    src="/assets/futbol.png"
+    alt="Fútbol"
+    class="absolute inset-0 w-full h-full object-cover sport-transition"
+  />
+
+  <!-- Text principal -->
+  <div
+    class="absolute left-24 top-1/2 transform -translate-y-1/2 text-white text-4xl max-w-lg z-30 hero-text"
+  >
+    Únete a la primera red social del mercado que conecta jugador@s y
+    profesionales del deporte con clubes deportivos
+  </div>
+
+  <!-- Nom del esport -->
+  <div class="absolute bottom-8 right-8 text-white text-7xl z-30">Fútbol</div>
+
+  <!-- LogoIcon centrat amb animació -->
+  <div
+    class="absolute inset-0 flex justify-center items-center z-20 animate-pulse-strong"
+  >
+    <LogoIcon
+      width={400}
+      height={400}
+      color="#ffffff"
+      secondaryColor="#ffffff"
+    />
+  </div>
+
+  <!-- Fletxes de navegació -->
+  <button
+    id="prev-button"
+    class="absolute left-8 z-30 p-4 text-white hover:text-gray-300 transition-colors arrow-button"
+  >
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M15 19l-7-7 7-7"></path>
+    </svg>
+  </button>
+
+  <button
+    id="next-button"
+    class="absolute right-8 z-30 p-4 text-white hover:text-gray-300 transition-colors arrow-button"
+  >
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 5l7 7-7 7"></path>
+    </svg>
+  </button>
+</div>
+
+<script>
+  // Aquí afegirem la lògica per canviar d'esport automàticament
+  const deportes = [
+    { nombre: "Fútbol", color: "#22c55e", imagen: "/assets/futbol.png" },
+    { nombre: "Baloncesto", color: "#f97316", imagen: "/assets/basket.png" },
+    { nombre: "Hockey", color: "#eab308", imagen: "/assets/hockey.png" },
+    { nombre: "Fútbol sala", color: "#3b82f6", imagen: "/assets/futsal.png" },
+    { nombre: "Voleibol", color: "#ec4899", imagen: "/assets/voleibol.png" },
+    { nombre: "Balonmano", color: "#7c3aed", imagen: "/assets/balonmano.png" },
+  ];
+
+  let currentIndex = 0;
+  const sportNameElement = document.querySelector(".absolute.bottom-8.right-8");
+  const logoElement = document.querySelector(
+    ".absolute.inset-0.flex.justify-center.items-center.z-20 svg"
+  );
+  const backgroundImage = document.getElementById(
+    "sport-background"
+  ) as HTMLImageElement;
+
+  function updateSport() {
+    const deporte = deportes[currentIndex];
+    if (sportNameElement) {
+      sportNameElement.textContent = deporte.nombre;
+    }
+    if (backgroundImage) {
+      backgroundImage.src = deporte.imagen;
+      backgroundImage.alt = deporte.nombre;
+    }
+    if (logoElement) {
+      // Canviar el color del logo
+      const paths = logoElement.querySelectorAll("path");
+      paths.forEach((path, index) => {
+        const colorIndex = path.getAttribute("data-color");
+        if (colorIndex === "2") {
+          path.setAttribute("fill", deporte.color);
+        }
+      });
+    }
+  }
+
+  function nextSport() {
+    currentIndex = (currentIndex + 1) % deportes.length;
+    updateSport();
+  }
+
+  // Canviar d'esport cada 5 segons
+  setInterval(nextSport, 5000);
+
+  // Event listeners per a les fletxes
+  const prevButton = document.getElementById("prev-button");
+  const nextButton = document.getElementById("next-button");
+
+  if (prevButton) {
+    prevButton.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + deportes.length) % deportes.length;
+      updateSport();
+    });
+  }
+
+  if (nextButton) {
+    nextButton.addEventListener("click", () => {
+      nextSport();
+    });
+  }
+
+  // Inicialitzar
+  updateSport();
+</script>
