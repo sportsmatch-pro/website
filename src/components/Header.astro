@@ -22,6 +22,32 @@ if (isArticlePage && !articleSlug) {
     articleSlug = pathSegments[blogIndex + 1];
   }
 }
+
+// Traduccions hardcoded amb rutes (mateixa estratègia que el footer)
+const translations = {
+  "es-ES": {
+    home: { text: "SPORTSMATCH", href: "/" },
+    blog: { text: "Blog", href: "/blog" },
+    about: { text: "Sobre nosotros", href: "/about" },
+    contact: { text: "Contacto", href: "/contact" },
+  },
+  "ca-ES": {
+    home: { text: "SPORTSMATCH", href: "/ca" },
+    blog: { text: "Blog", href: "/ca/blog" },
+    about: { text: "Sobre nosaltres", href: "/ca/about" },
+    contact: { text: "Contacte", href: "/ca/contact" },
+  },
+  en: {
+    home: { text: "SPORTSMATCH", href: "/en" },
+    blog: { text: "Blog", href: "/en/blog" },
+    about: { text: "About us", href: "/en/about" },
+    contact: { text: "Contact", href: "/en/contact" },
+  },
+};
+
+const t =
+  translations[currentLang as keyof typeof translations] ||
+  translations["es-ES"];
 ---
 
 <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
@@ -29,34 +55,30 @@ if (isArticlePage && !articleSlug) {
     <div class="flex justify-between items-center h-32 lg:h-40">
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href="/" class="text-2xl font-bold text-gray-900"> SportsMatch </a>
+        <a href={t.blog.href} class="text-2xl font-bold text-gray-900">
+          {t.home.text}
+        </a>
       </div>
 
       <!-- Navegació desktop -->
       <nav class="hidden lg:flex space-x-8">
         <a
-          href="/"
+          href={t.blog.href}
           class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
         >
-          Inicio
+          {t.blog.text}
         </a>
         <a
-          href="/blog"
+          href={t.about.href}
           class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
         >
-          Blog
+          {t.about.text}
         </a>
         <a
-          href="/about"
+          href={t.contact.href}
           class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
         >
-          Sobre nosotros
-        </a>
-        <a
-          href="/contact"
-          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-        >
-          Contacto
+          {t.contact.text}
         </a>
       </nav>
 
@@ -89,28 +111,28 @@ if (isArticlePage && !articleSlug) {
     <div class="lg:hidden hidden" id="mobile-menu">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         <a
-          href="/"
+          href={t.home.href}
           class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
         >
-          Inicio
+          {t.home.text}
         </a>
         <a
-          href="/blog"
+          href={t.blog.href}
           class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
         >
-          Blog
+          {t.blog.text}
         </a>
         <a
-          href="/about"
+          href={t.about.href}
           class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
         >
-          Sobre nosotros
+          {t.about.text}
         </a>
         <a
-          href="/contact"
+          href={t.contact.href}
           class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
         >
-          Contacto
+          {t.contact.text}
         </a>
       </div>
     </div>

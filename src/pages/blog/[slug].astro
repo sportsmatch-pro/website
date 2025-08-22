@@ -20,10 +20,10 @@ export async function getStaticPaths() {
   const res = await fetch(import.meta.env.API_BASE_URL + "articles");
   const posts = await res.json();
 
-  // Generar una ruta per a cada article (només una vegada)
+  // Generar una ruta per a cada article
   return posts.map((post: Post) => ({
     params: { slug: post.slug },
-    props: { post, allPosts: posts }, // Passar tots els posts per fallbacks
+    props: { post, allPosts: posts },
   }));
 }
 
