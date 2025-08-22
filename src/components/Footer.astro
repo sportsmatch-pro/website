@@ -20,7 +20,7 @@ const langMap = {
 const currentLangInfo =
   langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
 
-// Traduccions (simples per ara, després es pot integrar amb i18n)
+// Traduccions amb rutes per a cada idioma
 const translations = {
   "es-ES": {
     contactUs: "Contáctanos",
@@ -30,6 +30,11 @@ const translations = {
     privacyPolicy: "Política de Privacidad",
     cookiesPolicy: "Política de Cookies",
     allRightsReserved: "Todos los derechos reservados.",
+    routes: {
+      legal: "/aviso-legal",
+      privacy: "/politica-de-privacidad",
+      cookies: "/cookies",
+    },
   },
   "ca-ES": {
     contactUs: "Contacta'ns",
@@ -38,6 +43,11 @@ const translations = {
     privacyPolicy: "Política de Privacitat",
     cookiesPolicy: "Política de Cookies",
     allRightsReserved: "Tots els drets reservats.",
+    routes: {
+      legal: "/ca/avis-legal",
+      privacy: "/ca/politica-de-privacitat",
+      cookies: "/ca/cookies",
+    },
   },
   en: {
     contactUs: "Contact us",
@@ -47,6 +57,11 @@ const translations = {
     privacyPolicy: "Privacy Policy",
     cookiesPolicy: "Cookies Policy",
     allRightsReserved: "All rights reserved.",
+    routes: {
+      legal: "/en/legal",
+      privacy: "/en/privacy-policy",
+      cookies: "/en/cookies",
+    },
   },
 };
 
@@ -77,15 +92,9 @@ const t =
     </div>
 
     <div class="flex justify-center space-x-12 text-lg mb-6">
-      <a href={currentLangInfo.path + "/legal"} class="hover:underline"
-        >{t.legalNotice}</a
-      >
-      <a href={currentLangInfo.path + "/privacy"} class="hover:underline"
-        >{t.privacyPolicy}</a
-      >
-      <a href={currentLangInfo.path + "/cookies"} class="hover:underline"
-        >{t.cookiesPolicy}</a
-      >
+      <a href={t.routes.legal} class="hover:underline">{t.legalNotice}</a>
+      <a href={t.routes.privacy} class="hover:underline">{t.privacyPolicy}</a>
+      <a href={t.routes.cookies} class="hover:underline">{t.cookiesPolicy}</a>
     </div>
 
     <p class="text-sm">©2024. SPORTSMATCH. {t.allRightsReserved}</p>

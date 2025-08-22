@@ -51,6 +51,33 @@ if (currentSlug) {
   // Si no estem en un article, mostrar tots els idiomes
   availableLanguages = Object.keys(langMap);
 }
+
+// Detectar si estem en una pàgina legal i obtenir les rutes
+let legalPageRoutes: { [key: string]: string } = {};
+const currentPath = Astro.url.pathname;
+
+if (
+  currentPath.includes("/aviso-legal") ||
+  currentPath.includes("/avis-legal") ||
+  currentPath.includes("/legal")
+) {
+  // Pàgina d'Avís Legal
+  legalPageRoutes = {
+    "es-ES": "/aviso-legal",
+    "ca-ES": "/ca/avis-legal",
+    en: "/en/legal",
+  };
+} else if (
+  currentPath.includes("/politica-de-privacitat") ||
+  currentPath.includes("/privacy")
+) {
+  // Pàgina de Política de Privacitat
+  legalPageRoutes = {
+    "es-ES": "/politica-de-privacidad",
+    "ca-ES": "/ca/politica-de-privacitat",
+    en: "/en/privacy-policy",
+  };
+}
 ---
 
 <select
@@ -59,6 +86,7 @@ if (currentSlug) {
   data-current-lang={currentLang}
   data-current-slug={currentSlug}
   data-translation-slugs={JSON.stringify(translationSlugs)}
+  data-legal-page-routes={JSON.stringify(legalPageRoutes)}
 >
   {
     Object.entries(langMap).map(([key, lang]) => {
@@ -89,6 +117,11 @@ if (currentSlug) {
   // Obtenir els slugs de traducció des del servidor
   const translationSlugs = JSON.parse(
     languageSelector?.dataset.translationSlugs || "{}"
+  );
+
+  // Obtenir les rutes de pàgines legals des del servidor
+  const legalPageRoutes = JSON.parse(
+    languageSelector?.dataset.legalPageRoutes || "{}"
   );
 
   // Funció helper per obtenir el codi complet de l'idioma
@@ -133,8 +166,20 @@ if (currentSlug) {
 
         // Si no hi ha traducció, fallback a la lògica anterior
         fallbackNavigation(newPath);
+      } else if (Object.keys(legalPageRoutes).length > 0) {
+        // Si estem en una pàgina legal, navegar a la traducció
+        const newLangFull = getFullLanguageCode(newLang);
+        const targetRoute = legalPageRoutes[newLangFull];
+
+        if (targetRoute) {
+          window.location.href = targetRoute;
+          return;
+        }
+
+        // Si no hi ha ruta per a aquest idioma, fallback
+        fallbackNavigation(newPath);
       } else {
-        // Si no estem en un article, usar la lògica normal
+        // Si no estem en un article ni en una pàgina legal, usar la lògica normal
         fallbackNavigation(newPath);
       }
     });

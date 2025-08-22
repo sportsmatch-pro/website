@@ -9,5 +9,12 @@ export default {
     output: 'static',
     build: {
         static: true
+    },
+    vite: {
+        server: {
+            watch: {
+                usePolling: true
+            }
+        }
     }
 }
