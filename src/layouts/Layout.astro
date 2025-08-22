@@ -1,21 +1,29 @@
 ---
-const { title = "SportsMatch", description = "Una xarxa social esportiva" } = Astro.props;
+import BaseLayout from "./BaseLayout.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+  currentLang?: string;
+  showHeader?: boolean;
+  showFooter?: boolean;
+}
+
+const {
+  title,
+  description,
+  currentLang = "es-ES",
+  showHeader = true,
+  showFooter = true,
+} = Astro.props;
 ---
 
-<!DOCTYPE html>
-<html lang="ca">
-  <head>
-    <meta charset="utf-8" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="article" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-  <body class="font-sans text-gray-900 p-4">
-    <main>
-      <slot />
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title={title}
+  description={description}
+  currentLang={currentLang}
+  showHeader={showHeader}
+  showFooter={showFooter}
+>
+  <slot />
+</BaseLayout>

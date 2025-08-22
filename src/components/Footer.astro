@@ -1,0 +1,94 @@
+---
+// Props per a l'idioma actual
+export interface Props {
+  currentLang?: string;
+}
+
+const { currentLang = "es-ES" } = Astro.props;
+
+// Mapeig d'idiomes per a les URLs
+const langMap = {
+  "es-ES": { code: "es", name: "ES", path: "" },
+  "ca-ES": { code: "ca", name: "CA", path: "/ca" },
+  en: { code: "en", name: "EN", path: "/en" },
+};
+
+// Obtenir l'idioma actual
+const currentLangInfo =
+  langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
+
+// Traduccions (simples per ara, després es pot integrar amb i18n)
+const translations = {
+  "es-ES": {
+    contactUs: "Contáctanos",
+    contactText:
+      "Si tienes preguntas o necesitas ayuda, puedes contactarnos en:",
+    legalNotice: "Aviso Legal",
+    privacyPolicy: "Política de Privacidad",
+    cookiesPolicy: "Política de Cookies",
+    allRightsReserved: "Todos los derechos reservados.",
+  },
+  "ca-ES": {
+    contactUs: "Contacta'ns",
+    contactText: "Si tens preguntes o necessites ajuda, pots contactar-nos a:",
+    legalNotice: "Avís Legal",
+    privacyPolicy: "Política de Privacitat",
+    cookiesPolicy: "Política de Cookies",
+    allRightsReserved: "Tots els drets reservats.",
+  },
+  en: {
+    contactUs: "Contact us",
+    contactText:
+      "If you have questions or need assistance, you can contact us at:",
+    legalNotice: "Legal Notice",
+    privacyPolicy: "Privacy Policy",
+    cookiesPolicy: "Cookies Policy",
+    allRightsReserved: "All rights reserved.",
+  },
+};
+
+const t =
+  translations[currentLang as keyof typeof translations] ||
+  translations["es-ES"];
+---
+
+<footer class="bg-[#2e2e2e] text-white py-24 px-12 mt-0">
+  <div class="max-w-7xl mx-auto text-center">
+    <h2 class="text-6xl font-bold mb-8">{t.contactUs}</h2>
+    <p class="text-2xl mb-10">
+      {t.contactText}
+    </p>
+    <p class="text-4xl font-semibold text-white mb-10">info@sportsmatch.pro</p>
+    <div class="flex justify-center items-center space-x-12 mb-12">
+      <img
+        src="https://img.icons8.com/ios-filled/60/25D366/whatsapp--v1.png"
+        alt="WhatsApp"
+        class="h-12"
+      />
+      <span class="text-3xl">+34 689 47 22 60</span>
+    </div>
+
+    <div class="mx-auto mb-12 inline-block p-4 rounded-lg bg-[#2e2e2e]">
+      <!-- Logo placeholder - es pot migrar després -->
+      <div
+        class="w-[200px] h-[90px] bg-gray-600 rounded flex items-center justify-center text-white text-sm"
+      >
+        SPORTSMATCH LOGO
+      </div>
+    </div>
+
+    <div class="flex justify-center space-x-12 text-lg mb-6">
+      <a href={currentLangInfo.path + "/legal"} class="hover:underline"
+        >{t.legalNotice}</a
+      >
+      <a href={currentLangInfo.path + "/privacy"} class="hover:underline"
+        >{t.privacyPolicy}</a
+      >
+      <a href={currentLangInfo.path + "/cookies"} class="hover:underline"
+        >{t.cookiesPolicy}</a
+      >
+    </div>
+
+    <p class="text-sm">©2024. SPORTSMATCH. {t.allRightsReserved}</p>
+  </div>
+</footer>

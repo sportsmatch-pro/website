@@ -1,0 +1,76 @@
+---
+// Props per a l'idioma actual
+export interface Props {
+  currentLang?: string;
+}
+
+const { currentLang = "es-ES" } = Astro.props;
+
+// Mapeig d'idiomes per a les URLs
+const langMap = {
+  "es-ES": { code: "es", name: "ES", path: "", label: "Español" },
+  "ca-ES": { code: "ca", name: "CA", path: "/ca", label: "Català" },
+  en: { code: "en", name: "EN", path: "/en", label: "English" },
+};
+
+// Obtenir l'idioma actual
+const currentLangInfo =
+  langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
+---
+
+<select
+  class="border rounded-full px-4 py-1"
+  id="language-selector"
+  data-current-lang={currentLang}
+>
+  {
+    Object.entries(langMap).map(([key, lang]) => (
+      <option value={lang.path} selected={key === currentLang}>
+        {lang.name}
+      </option>
+    ))
+  }
+</select>
+
+<script>
+  // Funcionalitat del selector d'idioma
+  const languageSelector = document.getElementById(
+    "language-selector"
+  ) as HTMLSelectElement;
+
+  if (languageSelector) {
+    languageSelector.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const newPath = target.value;
+
+      // Obtenir la ruta actual
+      const currentPath = window.location.pathname;
+
+      // Separar la ruta en segments
+      const segments = currentPath.split("/").filter((segment) => segment);
+
+      // Si la ruta comença amb idioma, l'eliminem
+      if (segments[0] === "ca" || segments[0] === "en") {
+        segments.shift();
+      }
+
+      // Construir la nova ruta
+      let newUrl;
+      if (newPath) {
+        // Afegir el nou idioma al principi
+        newUrl = newPath + "/" + segments.join("/");
+      } else {
+        // Sense idioma (espanyol)
+        newUrl = "/" + segments.join("/");
+      }
+
+      // Assegurar-nos que comença amb /
+      if (!newUrl.startsWith("/")) {
+        newUrl = "/" + newUrl;
+      }
+
+      // Redirigir
+      window.location.href = newUrl;
+    });
+  }
+</script>

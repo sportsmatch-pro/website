@@ -1,0 +1,94 @@
+---
+import LanguageSelector from "./LanguageSelector.astro";
+
+// Props per a l'idioma actual
+export interface Props {
+  currentLang?: string;
+}
+
+const { currentLang = "es-ES" } = Astro.props;
+
+// Mapeig d'idiomes per a les URLs
+const langMap = {
+  "es-ES": { code: "es", name: "ES", path: "" },
+  "ca-ES": { code: "ca", name: "CA", path: "/ca" },
+  en: { code: "en", name: "EN", path: "/en" },
+};
+
+// Obtenir l'idioma actual
+const currentLangInfo =
+  langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
+---
+
+<header
+  class="bg-white shadow-sm hidden lg:block fixed top-0 left-0 w-full z-50"
+>
+  <div class="w-full px-4 py-6 flex items-center justify-between">
+    <div
+      class="flex-1 flex items-center space-x-6 text-base text-gray-800 justify-start ml-0"
+    >
+      <a href={currentLangInfo.path + "/"} class="hover:underline"
+        >Tu sueño, a tu alcance</a
+      >
+      <a href={currentLangInfo.path + "/"} class="font-bold underline"
+        >Encuentra a tu próxima estrella</a
+      >
+    </div>
+
+    <div class="flex justify-center flex-shrink-0">
+      <img src="/assets/logo.png" alt="SportsMatch Logo" class="h-12" />
+    </div>
+
+    <div class="flex-1 flex items-center justify-end space-x-4 text-base mr-4">
+      <LanguageSelector currentLang={currentLang} />
+      <a href={currentLangInfo.path + "/blog"} class="">Blog</a>
+      <button class="bg-gray-800 text-white px-4 py-1 rounded-full"
+        >Pregúntanos</button
+      >
+    </div>
+  </div>
+</header>
+
+<header class="bg-white shadow-sm lg:hidden">
+  <div class="w-full px-4 py-4 flex items-center justify-between">
+    <img src="/assets/logo.png" alt="SportsMatch Logo" class="h-10" />
+
+    <div class="flex items-center space-x-4">
+      <LanguageSelector currentLang={currentLang} />
+      <button class="bg-gray-800 text-white px-3 py-1 rounded-full"
+        >Pregúntanos</button
+      >
+      <button
+        class="text-gray-800 text-3xl focus:outline-none"
+        id="mobile-menu-button"
+      >
+        ☰
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="hidden flex-col items-start space-y-4 mt-4 px-4 text-gray-800 text-lg"
+    id="mobile-menu"
+  >
+    <a href={currentLangInfo.path + "/"} class="hover:underline"
+      >Tu sueño, a tu alcance</a
+    >
+    <a href={currentLangInfo.path + "/"} class="hover:underline"
+      >Encuentra a tu próxima estrella</a
+    >
+    <a href={currentLangInfo.path + "/blog"} class="hover:underline">Blog</a>
+  </div>
+</header>
+
+<script>
+  // Toggle del menú mòbil
+  const mobileMenuButton = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  }
+</script>

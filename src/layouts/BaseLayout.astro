@@ -1,0 +1,148 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+  currentLang?: string;
+  showHeader?: boolean;
+  showFooter?: boolean;
+}
+
+const {
+  title,
+  description = "SportsMatch - Tu sueño, a tu alcance",
+  currentLang = "es-ES",
+  showHeader = true,
+  showFooter = true,
+} = Astro.props;
+
+// Mapeig d'idiomes per a les URLs
+const langMap = {
+  "es-ES": { code: "es", name: "ES", path: "" },
+  "ca-ES": { code: "ca", name: "CA", path: "/ca" },
+  en: { code: "en", name: "EN", path: "/en" },
+};
+
+// Obtenir l'idioma actual
+const currentLangInfo =
+  langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
+
+// Meta tags per a cada idioma
+const metaLang =
+  currentLang === "es-ES" ? "es" : currentLang === "ca-ES" ? "ca" : "en";
+---
+
+<!doctype html>
+<html lang={metaLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Meta tags per a SEO -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={metaLang} />
+
+    <!-- Canonical URL -->
+    <link
+      rel="canonical"
+      href={`https://sportsmatch.pro${currentLangInfo.path}${Astro.url.pathname}`}
+    />
+
+    <!-- Hreflang tags per a SEO multilingüe -->
+    <link
+      rel="alternate"
+      hreflang="es"
+      href={`https://sportsmatch.pro${Astro.url.pathname.replace(/^\/(ca|en)?/, "")}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="ca"
+      href={`https://sportsmatch.pro/ca${Astro.url.pathname.replace(/^\/(ca|en)?/, "")}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href={`https://sportsmatch.pro/en${Astro.url.pathname.replace(/^\/(ca|en)?/, "")}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={`https://sportsmatch.pro${Astro.url.pathname.replace(/^\/(ca|en)?/, "")}`}
+    />
+  </head>
+
+  <body class="min-h-screen bg-white">
+    {showHeader && <Header currentLang={currentLang} />}
+
+    <!-- Spacer per al header fixe -->
+    {showHeader && <div class="h-32 lg:h-40" />}
+
+    <!-- Contingut principal -->
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    {showFooter && <Footer currentLang={currentLang} />}
+  </body>
+</html>
+
+<style is:global>
+  /* Estils globals */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+  }
+
+  /* Utilitats per a Tailwind */
+  .space-x-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 1.5rem;
+  }
+
+  .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 1rem;
+  }
+
+  .space-x-12 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 3rem;
+  }
+
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+  }
+
+  /* Responsive utilities */
+  @media (min-width: 1024px) {
+    .lg\:block {
+      display: block;
+    }
+
+    .lg\:hidden {
+      display: none;
+    }
+
+    .lg\:h-40 {
+      height: 10rem;
+    }
+  }
+</style>
