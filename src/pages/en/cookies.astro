@@ -1,10 +1,10 @@
 ---
 import Layout from "../../layouts/BaseLayout.astro";
-import PrivacyPolicyPage from "../../components/pages/PrivacyPolicyPage.astro";
+import CookiesPage from "../../components/pages/CookiesPage.astro";
 import { getPageConfig, getTranslationRoutes } from "../../config/routes";
 
 const currentLang = "en";
-const pageKey = "privacy";
+const pageKey = "cookies";
 
 // Obtenir configuració de la pàgina des del fitxer centralitzat
 const pageConfig = getPageConfig(pageKey, currentLang);
@@ -17,5 +17,5 @@ const translationRoutes = getTranslationRoutes(pageKey);
   currentLang={currentLang}
   translationRoutes={translationRoutes}
 >
-  <PrivacyPolicyPage currentLang={currentLang} />
+  <CookiesPage currentLang={currentLang} />
 </Layout>

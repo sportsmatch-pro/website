@@ -5,9 +5,10 @@ import LanguageSelector from "./LanguageSelector.astro";
 export interface Props {
   currentLang?: string;
   currentSlug?: string;
+  translationRoutes?: { [key: string]: string }; // NOU: rutes de traducció
 }
 
-const { currentLang = "es-ES", currentSlug } = Astro.props;
+const { currentLang = "es-ES", currentSlug, translationRoutes } = Astro.props;
 
 // Obtenir la ruta actual per determinar si estem en un article
 const currentPath = Astro.url.pathname;
@@ -84,7 +85,11 @@ const t =
 
       <!-- Selector d'idioma i botó mobile -->
       <div class="flex items-center space-x-4">
-        <LanguageSelector currentLang={currentLang} currentSlug={articleSlug} />
+        <LanguageSelector
+          currentLang={currentLang}
+          currentSlug={articleSlug}
+          translationRoutes={translationRoutes}
+        />
 
         <!-- Botó mobile menu -->
         <button

@@ -3,9 +3,10 @@
 export interface Props {
   currentLang?: string;
   currentSlug?: string; // Afegir slug de l'article actual
+  translationRoutes?: { [key: string]: string }; // NOU: rutes de traducció per a la pàgina actual
 }
 
-const { currentLang = "es-ES", currentSlug } = Astro.props;
+const { currentLang = "es-ES", currentSlug, translationRoutes } = Astro.props;
 
 // Mapeig d'idiomes per a les URLs
 const langMap = {
@@ -18,11 +19,15 @@ const langMap = {
 const currentLangInfo =
   langMap[currentLang as keyof typeof langMap] || langMap["es-ES"];
 
-// Si estem en un article, obtenir els idiomes disponibles
+// Si tenim rutes de traducció, usar-les per determinar idiomes disponibles
 let availableLanguages: string[] = [];
 let translationSlugs: { [key: string]: string } = {};
 
-if (currentSlug) {
+if (translationRoutes && Object.keys(translationRoutes).length > 0) {
+  // Tenim rutes de traducció, usar-les
+  availableLanguages = Object.keys(translationRoutes);
+  translationSlugs = translationRoutes;
+} else if (currentSlug) {
   // Cridar l'API per obtenir l'article amb les seves traduccions
   try {
     const res = await fetch(
@@ -48,35 +53,8 @@ if (currentSlug) {
     availableLanguages = Object.keys(langMap);
   }
 } else {
-  // Si no estem en un article, mostrar tots els idiomes
+  // Si no estem en un article ni tenim rutes, mostrar tots els idiomes
   availableLanguages = Object.keys(langMap);
-}
-
-// Detectar si estem en una pàgina legal i obtenir les rutes
-let legalPageRoutes: { [key: string]: string } = {};
-const currentPath = Astro.url.pathname;
-
-if (
-  currentPath.includes("/aviso-legal") ||
-  currentPath.includes("/avis-legal") ||
-  currentPath.includes("/legal")
-) {
-  // Pàgina d'Avís Legal
-  legalPageRoutes = {
-    "es-ES": "/aviso-legal",
-    "ca-ES": "/ca/avis-legal",
-    en: "/en/legal",
-  };
-} else if (
-  currentPath.includes("/politica-de-privacitat") ||
-  currentPath.includes("/privacy")
-) {
-  // Pàgina de Política de Privacitat
-  legalPageRoutes = {
-    "es-ES": "/politica-de-privacidad",
-    "ca-ES": "/ca/politica-de-privacitat",
-    en: "/en/privacy-policy",
-  };
 }
 ---
 
@@ -86,7 +64,7 @@ if (
   data-current-lang={currentLang}
   data-current-slug={currentSlug}
   data-translation-slugs={JSON.stringify(translationSlugs)}
-  data-legal-page-routes={JSON.stringify(legalPageRoutes)}
+  data-translation-routes={JSON.stringify(translationRoutes || {})}
 >
   {
     Object.entries(langMap).map(([key, lang]) => {
@@ -119,9 +97,9 @@ if (
     languageSelector?.dataset.translationSlugs || "{}"
   );
 
-  // Obtenir les rutes de pàgines legals des del servidor
-  const legalPageRoutes = JSON.parse(
-    languageSelector?.dataset.legalPageRoutes || "{}"
+  // Obtenir les rutes de traducció des del servidor
+  const translationRoutes = JSON.parse(
+    languageSelector?.dataset.translationRoutes || "{}"
   );
 
   // Funció helper per obtenir el codi complet de l'idioma
@@ -166,10 +144,10 @@ if (
 
         // Si no hi ha traducció, fallback a la lògica anterior
         fallbackNavigation(newPath);
-      } else if (Object.keys(legalPageRoutes).length > 0) {
-        // Si estem en una pàgina legal, navegar a la traducció
+      } else if (Object.keys(translationRoutes).length > 0) {
+        // Si tenim rutes de traducció, usar-les directament
         const newLangFull = getFullLanguageCode(newLang);
-        const targetRoute = legalPageRoutes[newLangFull];
+        const targetRoute = translationRoutes[newLangFull];
 
         if (targetRoute) {
           window.location.href = targetRoute;
@@ -179,7 +157,7 @@ if (
         // Si no hi ha ruta per a aquest idioma, fallback
         fallbackNavigation(newPath);
       } else {
-        // Si no estem en un article ni en una pàgina legal, usar la lògica normal
+        // Si no estem en un article ni tenim rutes, usar la lògica normal
         fallbackNavigation(newPath);
       }
     });
