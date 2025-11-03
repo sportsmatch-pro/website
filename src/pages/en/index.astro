@@ -1,7 +1,31 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import Layout from "../../layouts/BaseLayout.astro";
+import DeportesSlider from "../../components/DeportesSlider.astro";
+import TalentIntroSection from "../../components/TalentIntroSection.astro";
+import DeportesSelector from "../../components/DeportesSelector.astro";
+import SectionContactForm from "../../components/SectionContactForm.astro";
+import DownloadAppSection from "../../components/DownloadAppSection.astro";
+import PromoVideo from "../../components/PromoVideo.astro";
+import HomeSports from "../../components/HomeSports.astro";
+import HomeStar from "../../components/HomeStar.astro";
+import HomeDream from "../../components/HomeDream.astro";
+
+const currentLang = "en";
 ---
 
-<Layout title="SportsMatch" currentLang="en">
-  <h1 class="text-3xl font-bold mb-6">Home</h1>
+<Layout
+  title="SportsMatch - Your dream, at your reach"
+  description="The first social network that connects players and sports professionals with sports clubs"
+  currentLang={currentLang}
+  showHeader={true}
+  showFooter={true}
+>
+  <!-- Hero Section amb DeportesSlider -->
+  <DeportesSlider currentLang={currentLang} />
+  <PromoVideo />
+  <HomeDream currentLang={currentLang} />
+  <HomeStar currentLang={currentLang} />
+  <HomeSports currentLang={currentLang} />
+  <SectionContactForm currentLang={currentLang} />
+  <DownloadAppSection currentLang={currentLang} />
 </Layout>

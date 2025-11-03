@@ -1,56 +1,91 @@
 ---
 export interface Props {
   title: string;
+  subtitle: string | null;
   text: string;
+  action: string | null;
   images: string[];
   imagePosition: "left" | "right";
   background: "black" | "white";
   textColor: "black" | "white";
+  alt: string[];
 }
 
-const { title, text, images, imagePosition, background, textColor } =
-  Astro.props;
+const {
+  title,
+  subtitle,
+  text,
+  action,
+  images,
+  alt,
+  imagePosition,
+  background,
+  textColor,
+} = Astro.props;
 
 const flexDirection =
   imagePosition === "left" ? "flex-row-reverse" : "flex-row";
-const bgClass = background === "black" ? "bg-black" : "bg-white";
+const bgClass = background === "black" ? "bg-zinc-700" : "bg-white";
 const textClass = textColor === "white" ? "text-white" : "text-black";
-const titleCenterClass = title.toLowerCase().includes("tu sueño")
-  ? "text-center"
-  : "";
+
+// Generar un ID únic per al carrusel
+const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<section
-  class={`${bgClass} w-screen lg:h-screen lg:flex items-center justify-center`}
->
-  <div class={`lg:flex ${flexDirection} w-full lg:h-full`}>
+<section class={`${bgClass} w-screen lg:flex items-center justify-center`}>
+  <div class={`lg:flex ${flexDirection} w-full`}>
     <!-- Contingut de text -->
-    <div class="lg:w-1/2 h-full p-8 flex flex-col justify-between">
-      <div class={`${textClass} ${titleCenterClass} px-8 py-12`}>
-        <h2 class={`text-6xl mb-12 whitespace-pre-line ${titleCenterClass}`}>
-          {title}
-        </h2>
-        <div class={`text-3xl mt-4 ${titleCenterClass}`}>
-          {text}
-        </div>
+    <div class="lg:w-1/2 flex flex-col justify-between gap-48">
+      <div class={`${textClass} px-8 py-12`}>
+        <h2
+          class={`text-6xl mb-12 whitespace-pre-line font-medium`}
+          set:html={title}
+        />
+        <p class={`text-4xl my-12 font-medium`} set:html={subtitle} />
+        <div class={`text-2xl font-light`} set:html={text} />
       </div>
+      <p class={`${textClass} p-8 text-2xl font-medium`} set:html={action} />
     </div>
 
     <!-- Imatge amb carrusel -->
-    <div class="lg:w-1/2 h-full relative overflow-hidden">
-      <!-- Per ara usem una imatge placeholder -->
+    <div class="lg:w-1/2 relative overflow-hidden">
+      <!-- Carrusel d'imatges -->
+      <div id={carouselId} class="w-full h-full relative">
+        {
+          images.map((image, index) => (
+            <img
+              src={image}
+              alt={alt[index]}
+              class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                index === 0 ? "opacity-100" : "opacity-0"
+              }`}
+              data-index={index}
+            />
+          ))
+        }
+      </div>
+
+      <!-- Indicadors del carrusel -->
       <div
-        class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center"
+        class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
       >
-        <div class="text-center">
-          <div class="text-6xl mb-4">🏃‍♂️</div>
-          <div class="text-xl text-gray-600">Imatge del esport</div>
-        </div>
+        {
+          images.map((_, index) => (
+            <button
+              class={`w-3 h-3 rounded-full transition-all ${
+                index === 0 ? "bg-white" : "bg-white bg-opacity-50"
+              }`}
+              data-index={index}
+              aria-label={`Anar a imatge ${index + 1}`}
+            />
+          ))
+        }
       </div>
 
       <!-- Botons de navegació del carrusel -->
       <button
-        class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"
+        class="carousel-prev absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all z-10"
+        aria-label="Imatge anterior"
       >
         <svg
           class="w-6 h-6 text-white"
@@ -67,7 +102,8 @@ const titleCenterClass = title.toLowerCase().includes("tu sueño")
       </button>
 
       <button
-        class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all"
+        class="carousel-next absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all z-10"
+        aria-label="Imatge següent"
       >
         <svg
           class="w-6 h-6 text-white"

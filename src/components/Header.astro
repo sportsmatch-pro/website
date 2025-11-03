@@ -4,12 +4,18 @@ import HeaderLogoIcon from "./HeaderLogoIcon.astro";
 
 // Props per a l'idioma actual i slug de l'article
 export interface Props {
+  title?: string;
   currentLang?: string;
   currentSlug?: string;
   translationRoutes?: { [key: string]: string }; // NOU: rutes de traducció
 }
 
-const { currentLang = "es-ES", currentSlug, translationRoutes } = Astro.props;
+const {
+  title,
+  currentLang = "es-ES",
+  currentSlug,
+  translationRoutes,
+} = Astro.props;
 
 // Obtenir la ruta actual per determinar si estem en un article
 const currentPath = Astro.url.pathname;
@@ -30,17 +36,23 @@ const translations = {
   "es-ES": {
     home: { text: "SPORTSMATCH", href: "/" },
     blog: { text: "Blog", href: "/blog" },
-    contact: { text: "Contacto", href: "/contact" },
+    contact: { text: "Pregúntanos", href: "/#contact" },
+    dream: { text: "Tu sueño, a tu alcance", href: "#dream" },
+    star: { text: "Encuentra a tu próxima estrella", href: "#star" },
   },
   "ca-ES": {
     home: { text: "SPORTSMATCH", href: "/ca" },
     blog: { text: "Blog", href: "/ca/blog" },
-    contact: { text: "Contacte", href: "/ca/contact" },
+    contact: { text: "Pregunta'ns", href: "/ca/#contact" },
+    dream: { text: "El teu somni, a l'abast", href: "#dream" },
+    star: { text: "Troba la teva pròxima estrella", href: "#star" },
   },
   en: {
     home: { text: "SPORTSMATCH", href: "/en" },
     blog: { text: "Blog", href: "/en/blog" },
-    contact: { text: "Contact", href: "/en/contact" },
+    contact: { text: "Ask us", href: "/en/#contact" },
+    dream: { text: "Your dream, at your reach", href: "#dream" },
+    star: { text: "Find your next star", href: "#star" },
   },
 };
 
@@ -49,31 +61,36 @@ const t =
   translations["es-ES"];
 ---
 
-<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+<header
+  class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 header-scrollable"
+  id="main-header"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-32 lg:h-40">
-      <!-- Navegació desktop -->
-      <nav class="hidden lg:flex space-x-8">
-        <a
-          href={t.blog.href}
-          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-        >
-          {t.blog.text}
-        </a>
-        <a
-          href={t.contact.href}
-          class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-        >
-          {t.contact.text}
-        </a>
-      </nav>
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center h-20">
+      <!-- Columna esquerra: Navegació -->
+      <div class="flex justify-start">
+        <nav class="hidden lg:flex space-x-4">
+          <a
+            href={t.dream.href}
+            class="text-gray-700 hover:text-gray-900 py-2 text-sm"
+          >
+            {t.dream.text}
+          </a>
+          <a
+            href={t.star.href}
+            class="text-gray-700 hover:text-gray-900 py-2 text-sm"
+          >
+            {t.star.text}
+          </a>
+        </nav>
+      </div>
 
-      <!-- Logo -->
-      <div class="flex-shrink-0">
+      <!-- Columna central: Logo (sempre centrat) -->
+      <div class="flex justify-center">
         <a href={t.home.href} class="flex items-center">
           <HeaderLogoIcon
             width={140}
-            height={105}
+            height={70}
             color="#000"
             secondaryColor="#999"
             accentColor="#000"
@@ -81,24 +98,26 @@ const t =
         </a>
       </div>
 
-      <!-- Selector d'idioma i botó mobile -->
-      <div class="flex items-center space-x-4">
-        <LanguageSelector
-          currentLang={currentLang}
-          currentSlug={articleSlug}
-          translationRoutes={translationRoutes}
-        />
+      <!-- Columna dreta: Selector d'idioma i navegació -->
+      <div class="flex justify-end items-center space-x-4">
+        <div class="hidden lg:flex">
+          <LanguageSelector
+            currentLang={currentLang}
+            currentSlug={articleSlug}
+            translationRoutes={translationRoutes}
+          />
+        </div>
         <!-- Navegació desktop -->
-        <nav class="hidden lg:flex space-x-8">
+        <nav class="hidden lg:flex space-x-4 items-center">
           <a
             href={t.blog.href}
-            class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            class="text-gray-700 hover:text-gray-900 py-2 text-sm"
           >
             {t.blog.text}
           </a>
           <a
             href={t.contact.href}
-            class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            class="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition-colors text-sm"
           >
             {t.contact.text}
           </a>
@@ -124,23 +143,28 @@ const t =
         </button>
       </div>
     </div>
+  </div>
 
-    <!-- Navegació mobile -->
-    <div class="lg:hidden hidden" id="mobile-menu">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <a
-          href={t.blog.href}
-          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
-        >
-          {t.blog.text}
-        </a>
-        <a
-          href={t.contact.href}
-          class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
-        >
-          {t.contact.text}
-        </a>
-      </div>
+  <!-- Navegació mobile -->
+  <div class="lg:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a
+        href={t.blog.href}
+        class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+      >
+        {t.blog.text}
+      </a>
+      <a
+        href={t.contact.href}
+        class="text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium"
+      >
+        {t.contact.text}
+      </a>
+      <LanguageSelector
+        currentLang={currentLang}
+        currentSlug={articleSlug}
+        translationRoutes={translationRoutes}
+      />
     </div>
   </div>
 </header>
@@ -155,4 +179,30 @@ const t =
       mobileMenu.classList.toggle("hidden");
     });
   }
+
+  // Funcionalitat hide/show header amb scroll
+  const header = document.getElementById("main-header");
+  let lastScroll = 0;
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.pageYOffset;
+
+    if (header) {
+      if (currentScroll <= 0) {
+        // Som al top, mostra l'header
+        header.classList.remove("header-hidden");
+        header.classList.add("header-visible");
+      } else if (currentScroll > lastScroll && currentScroll > 100) {
+        // Scroll cap avall i ja hem fet més de 100px, amaga l'header
+        header.classList.remove("header-visible");
+        header.classList.add("header-hidden");
+      } else if (currentScroll < lastScroll) {
+        // Scroll cap amunt, mostra l'header
+        header.classList.remove("header-hidden");
+        header.classList.add("header-visible");
+      }
+    }
+
+    lastScroll = currentScroll;
+  });
 </script>

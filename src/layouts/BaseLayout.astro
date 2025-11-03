@@ -49,6 +49,9 @@ const metaLang =
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
+    <!-- Scripts -->
+    <script src="/scripts/carousel.js" is:inline></script>
+
     <!-- Preload fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,7 +103,7 @@ const metaLang =
     }
 
     <!-- Spacer per al header fixe -->
-    {showHeader && <div class="h-32 lg:h-40" />}
+    {showHeader && <div class="h-20" />}
 
     <!-- Contingut principal -->
     <main class="flex-1">

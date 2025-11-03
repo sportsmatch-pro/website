@@ -56,74 +56,221 @@ if (translationRoutes && Object.keys(translationRoutes).length > 0) {
   // Si no estem en un article ni tenim rutes, mostrar tots els idiomes
   availableLanguages = Object.keys(langMap);
 }
+
+// Assegurar que l'idioma actual sempre estigui disponible
+if (!availableLanguages.includes(currentLang)) {
+  availableLanguages.push(currentLang);
+}
+
+// Debug: mostrar quins idiomes estan disponibles
+console.log("Idiomes disponibles:", availableLanguages);
+console.log("Idioma actual:", currentLang);
+console.log("LangMap:", langMap);
 ---
 
-<select
-  class="border rounded-full px-4 py-1"
-  id="language-selector"
-  data-current-lang={currentLang}
+<!-- Custom Select Container -->
+<div
+  class="relative language-selector-container"
   data-current-slug={currentSlug}
   data-translation-slugs={JSON.stringify(translationSlugs)}
   data-translation-routes={JSON.stringify(translationRoutes || {})}
 >
-  {
-    Object.entries(langMap).map(([key, lang]) => {
-      const isAvailable = availableLanguages.includes(key);
-      const isCurrent = key === currentLang;
+  <!-- Selector principal -->
+  <button
+    type="button"
+    class="flex items-center justify-between w-20 px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 focus:outline-none transition-all duration-200 language-button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+  >
+    <span class="text-gray-900 font-semibold">{currentLangInfo.name}</span>
+    <svg
+      class="w-4 h-4 ml-1 text-gray-400 transition-transform duration-200 chevron-icon"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
 
-      return (
-        <option
-          value={lang.path}
-          selected={isCurrent}
-          disabled={!isAvailable}
-          class={!isAvailable ? "text-gray-400" : ""}
-        >
-          {lang.name} {!isAvailable ? "(No disponible)" : ""}
-        </option>
-      );
-    })
-  }
-</select>
+  <!-- Dropdown menu -->
+  <div
+    class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-50 language-dropdown"
+    role="listbox"
+  >
+    {
+      Object.entries(langMap).map(([key, lang]) => {
+        const isAvailable = availableLanguages.includes(key);
+        const isCurrent = key === currentLang;
+
+        return (
+          <button
+            type="button"
+            class={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${
+              isCurrent
+                ? "bg-gray-100 text-gray-800 font-medium"
+                : isAvailable
+                  ? "text-gray-700 hover:bg-gray-50"
+                  : "text-gray-400 cursor-not-allowed"
+            } ${!isAvailable ? "opacity-50" : ""}`}
+            data-value={lang.path}
+            data-lang={key}
+            disabled={!isAvailable}
+            role="option"
+            aria-selected={isCurrent}
+          >
+            <div class="flex items-center justify-between">
+              <span>{lang.name}</span>
+              {isCurrent && (
+                <svg
+                  class="w-4 h-4 text-gray-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+          </button>
+        );
+      })
+    }
+  </div>
+</div>
 
 <script>
-  // Funcionalitat del selector d'idioma
-  const languageSelector = document.getElementById(
-    "language-selector"
-  ) as HTMLSelectElement;
-  const currentSlug = languageSelector?.dataset.currentSlug;
-
-  // Obtenir els slugs de traducció des del servidor
-  const translationSlugs = JSON.parse(
-    languageSelector?.dataset.translationSlugs || "{}"
+  // Funcionalitat del custom selector d'idioma
+  // Buscar tots els selectors d'idioma a la pàgina
+  const languageSelectors = document.querySelectorAll(
+    ".language-selector-container"
   );
 
-  // Obtenir les rutes de traducció des del servidor
-  const translationRoutes = JSON.parse(
-    languageSelector?.dataset.translationRoutes || "{}"
-  );
+  languageSelectors.forEach((container) => {
+    const languageButton = container.querySelector(
+      ".language-button"
+    ) as HTMLButtonElement;
+    const languageDropdown = container.querySelector(
+      ".language-dropdown"
+    ) as HTMLDivElement;
+    const chevronIcon = container.querySelector(".chevron-icon") as SVGElement;
 
-  // Funció helper per obtenir el codi complet de l'idioma
-  function getFullLanguageCode(shortLang: string): string {
-    switch (shortLang) {
-      case "es":
-        return "es-ES";
-      case "ca":
-        return "ca-ES";
-      case "en":
-        return "en";
-      default:
-        return shortLang;
+    // Obtenir les dades directament dels props del component
+    const currentSlug =
+      container.getAttribute("data-current-slug") || undefined;
+    const translationSlugs = JSON.parse(
+      container.getAttribute("data-translation-slugs") || "{}"
+    );
+    const translationRoutes = JSON.parse(
+      container.getAttribute("data-translation-routes") || "{}"
+    );
+
+    // Funció helper per obtenir el codi complet de l'idioma
+    function getFullLanguageCode(shortLang: string): string {
+      switch (shortLang) {
+        case "es":
+          return "es-ES";
+        case "ca":
+          return "ca-ES";
+        case "en":
+          return "en";
+        default:
+          return shortLang;
+      }
     }
-  }
 
-  if (languageSelector) {
-    languageSelector.addEventListener("change", (e) => {
-      const target = e.target as HTMLSelectElement;
-      const newPath = target.value;
-      const newLang = target.options[target.selectedIndex].text
-        .split(" ")[0]
-        .toLowerCase();
+    // Toggle del dropdown
+    if (languageButton && languageDropdown && chevronIcon) {
+      languageButton.addEventListener("click", () => {
+        const isExpanded =
+          languageButton.getAttribute("aria-expanded") === "true";
 
+        // Toggle del dropdown
+        languageButton.setAttribute("aria-expanded", (!isExpanded).toString());
+
+        if (!isExpanded) {
+          // Obrir dropdown
+          languageDropdown.classList.remove("opacity-0", "invisible");
+          languageDropdown.classList.add("opacity-100", "visible");
+          chevronIcon.style.transform = "rotate(180deg)";
+        } else {
+          // Tancar dropdown
+          languageDropdown.classList.add("opacity-0", "invisible");
+          languageDropdown.classList.remove("opacity-100", "visible");
+          chevronIcon.style.transform = "rotate(0deg)";
+        }
+      });
+
+      // Tancar dropdown quan es fa clic fora
+      document.addEventListener("click", (e) => {
+        if (
+          !languageButton?.contains(e.target as Node) &&
+          !languageDropdown?.contains(e.target as Node)
+        ) {
+          languageButton?.setAttribute("aria-expanded", "false");
+          languageDropdown?.classList.add("opacity-0", "invisible");
+          languageDropdown?.classList.remove("opacity-100", "visible");
+          chevronIcon?.style.setProperty("transform", "rotate(0deg)");
+        }
+      });
+
+      // Event listeners per a les opcions del dropdown
+      const dropdownOptions =
+        languageDropdown?.querySelectorAll("[data-value]");
+      dropdownOptions?.forEach((option) => {
+        option.addEventListener("click", (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const newPath = target.dataset.value;
+          const newLang = target.dataset.lang;
+
+          console.log("Clic a opció:", {
+            newPath,
+            newLang,
+            currentSlug,
+            translationSlugs,
+            translationRoutes,
+          });
+
+          if (newPath !== undefined && newLang) {
+            // Tancar dropdown
+            languageButton.setAttribute("aria-expanded", "false");
+            languageDropdown.classList.add("opacity-0", "invisible");
+            languageDropdown.classList.remove("opacity-100", "visible");
+            chevronIcon.style.transform = "rotate(0deg)";
+
+            // Navegar directament sense dependre del select
+            handleLanguageChange(
+              newPath,
+              newLang,
+              currentSlug,
+              translationSlugs,
+              translationRoutes
+            );
+          } else {
+            console.log("Dades incompletes per a la navegació:", {
+              newPath,
+              newLang,
+            });
+          }
+        });
+      });
+    }
+
+    // Funció per gestionar el canvi d'idioma
+    function handleLanguageChange(
+      newPath: string,
+      newLang: string,
+      currentSlug: string | undefined,
+      translationSlugs: any,
+      translationRoutes: any
+    ) {
       // Si estem en un article, intentar navegar a la traducció
       if (currentSlug) {
         // Obtenir l'idioma complet del nou idioma seleccionat
@@ -133,7 +280,7 @@ if (translationRoutes && Object.keys(translationRoutes).length > 0) {
         if (translationSlugs[newLangFull]) {
           // Navegar directament a la traducció
           let newUrl;
-          if (newPath) {
+          if (newPath && newPath !== "") {
             newUrl = newPath + "/blog/" + translationSlugs[newLangFull];
           } else {
             newUrl = "/blog/" + translationSlugs[newLangFull];
@@ -160,8 +307,8 @@ if (translationRoutes && Object.keys(translationRoutes).length > 0) {
         // Si no estem en un article ni tenim rutes, usar la lògica normal
         fallbackNavigation(newPath);
       }
-    });
-  }
+    }
+  }); // Tancar el forEach
 
   function fallbackNavigation(newPath: string) {
     // Obtenir la ruta actual
@@ -177,11 +324,11 @@ if (translationRoutes && Object.keys(translationRoutes).length > 0) {
 
     // Construir la nova ruta
     let newUrl;
-    if (newPath) {
+    if (newPath && newPath !== "") {
       // Afegir el nou idioma al principi
       newUrl = newPath + "/" + segments.join("/");
     } else {
-      // Sense idioma (espanyol)
+      // Sense idioma (espanyol) - ruta buida
       newUrl = "/" + segments.join("/");
     }
 

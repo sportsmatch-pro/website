@@ -8,50 +8,53 @@ const { currentLang = "es-ES" } = Astro.props;
 const deportes = [
   {
     nombre: "Fútbol",
-    color: "border-green-500",
-    imagen: "/assets/futbolsection2.png",
+    color: "#22c55e",
+    imagen: "https://assets.sportsmatch.app/sport/choice-soccer.png",
   },
   {
     nombre: "Baloncesto",
-    color: "border-orange-500",
-    imagen: "/assets/basketsection2.png",
+    color: "#f97316",
+    imagen: "https://assets.sportsmatch.app/sport/choice-basketball.png",
   },
   {
     nombre: "Hockey",
-    color: "border-yellow-500",
-    imagen: "/assets/hockeysection2.png",
+    color: "#eab308",
+    imagen: "https://assets.sportsmatch.app/sport/choice-roller-hockey.png",
   },
   {
     nombre: "Fútbol sala",
-    color: "border-blue-500",
-    imagen: "/assets/futbolsalasection2.png",
+    color: "#3b82f6",
+    imagen: "https://assets.sportsmatch.app/sport/choice-futsal.png",
   },
   {
     nombre: "Voleibol",
-    color: "border-pink-500",
-    imagen: "/assets/voleibolsection2.png",
+    color: "#ec4899",
+    imagen: "https://assets.sportsmatch.app/sport/choice-volleyball.png",
   },
   {
     nombre: "Balonmano",
-    color: "border-purple-600",
-    imagen: "/assets/balonmanosection2.png",
+    color: "#7c3aed",
+    imagen: "https://assets.sportsmatch.app/sport/choice-handball.png",
   },
 ];
 
 const translations = {
   "es-ES": {
     title: "¿Cuál es tu deporte?",
-    subtitle: "SPORTSMATCH te permite registrarte en uno de estos 6 deportes.",
+    subtitle:
+      "<b>SPORTSMATCH</b> te permite registrarte en cualquiera de estos deportes.",
     downloadText: "Descarga la app y comienza tu viaje.",
   },
   "ca-ES": {
     title: "Quin és el teu esport?",
-    subtitle: "SPORTSMATCH et permet registrar-te en un d'aquests 6 esports.",
+    subtitle:
+      "<b>SPORTSMATCH</b> et permet registrar-te en qualsevol d'aquests esports.",
     downloadText: "Descarrega l'app i comença el teu viatge.",
   },
   en: {
     title: "Which is your sport?",
-    subtitle: "SPORTSMATCH allows you to register in one of these 6 sports.",
+    subtitle:
+      "<b>SPORTSMATCH</b> allows you to register in one of these sports.",
     downloadText: "Download the app and start your journey.",
   },
 };
@@ -62,33 +65,26 @@ const t =
 ---
 
 <section
-  class="snap-center snap-mandatory w-screen min-h-screen flex flex-col items-center justify-center bg-white"
+  class="w-screen flex flex-col items-center justify-center bg-white py-20 gap-20"
 >
-  <h2 class="mt-48 mb-2 text-6xl font-bold text-center text-gray-900">
-    {t.title}
-  </h2>
+  <div class="flex flex-col items-center justify-center gap-2">
+    <h2 class="text-6xl font-bold text-center text-gray-900">
+      {t.title}
+    </h2>
 
-  <p class="mt-[-12px] text-2xl text-center text-gray-600 max-w-4xl">
-    {t.subtitle}
-  </p>
+    <p class="text-xl text-center text-gray-600" set:html={t.subtitle} />
+  </div>
 
-  <div
-    class="grid grid-cols-2 gap-8 sm:flex sm:flex-wrap sm:justify-center sm:gap-12 mt-16"
-  >
+  <div class="grid grid-cols-2 gap-8 sm:flex sm:flex-wrap sm:justify-center">
     {
       deportes.map((deporte) => (
         <div class="text-center">
-          <div
-            class={`w-32 h-32 mx-auto mb-4 rounded-full border-4 ${deporte.color} bg-gray-100 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer`}
-          >
-            <div class="text-4xl">
-              {deporte.nombre === "Fútbol" && "⚽"}
-              {deporte.nombre === "Baloncesto" && "🏀"}
-              {deporte.nombre === "Hockey" && "🏒"}
-              {deporte.nombre === "Fútbol sala" && "⚽"}
-              {deporte.nombre === "Voleibol" && "🏐"}
-              {deporte.nombre === "Balonmano" && "🤾"}
-            </div>
+          <div class="w-40 h-40 mx-auto mb-4 relative hover:scale-110 transition-transform cursor-pointer">
+            <img
+              src={deporte.imagen}
+              alt={deporte.nombre}
+              class="absolute inset-0 w-full h-full object-cover rounded-full"
+            />
           </div>
           <h3 class="text-xl font-semibold text-gray-800">{deporte.nombre}</h3>
         </div>
@@ -96,7 +92,7 @@ const t =
     }
   </div>
 
-  <p class="mt-12 text-5xl font-bold max-w-3xl text-center text-gray-900">
+  <p class="text-2xl font-bold max-w-3xl text-center text-gray-900">
     {t.downloadText}
   </p>
 </section>

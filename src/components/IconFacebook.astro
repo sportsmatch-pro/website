@@ -1,0 +1,31 @@
+---
+export interface Props {
+  width?: number;
+  height?: number;
+  color?: string;
+}
+
+const { width = 54, height = 54, color = "#ffffff" } = Astro.props;
+---
+
+<svg
+  preserveAspectRatio="xMidYMid meet"
+  data-bbox="0 -0.003 54 54"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 -0.003 54 54"
+  height={height}
+  width={width}
+  data-type="color"
+  role="presentation"
+  aria-hidden="true"
+  aria-label=""
+>
+  <g>
+    <path
+      fill={color}
+      d="M0 27.147c0 13.423 9.75 24.586 22.5 26.85V34.494h-6.75v-7.499h6.75v-6c0-6.75 4.35-10.5 10.5-10.5 1.95 0 4.05.3 6 .6v6.9h-3.45c-3.3 0-4.05 1.65-4.05 3.75v5.25h7.2l-1.2 7.5h-6v19.5C44.25 51.733 54 40.573 54 27.146 54 12.215 41.85-.003 27-.003S0 12.214 0 27.146Z"
+      clip-rule="evenodd"
+      fill-rule="evenodd"
+      data-color="1"></path>
+  </g>
+</svg>

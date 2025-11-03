@@ -4,6 +4,9 @@ export interface Props {
   height?: number;
   color?: string;
   secondaryColor?: string;
+  responsive?: boolean;
+  responsiveWidth?: string; // Percentatge (ej: "50%") o vw (ej: "25vw")
+  responsiveMaxHeight?: string; // Percentatge (ej: "50%") o vh (ej: "25vh")
 }
 
 const {
@@ -11,7 +14,21 @@ const {
   height = 90,
   color = "#808080",
   secondaryColor = "#ffffff",
+  responsive = false,
+  responsiveWidth,
+  responsiveMaxHeight,
 } = Astro.props;
+
+// Relació d'aspecte original: ~0.765 (80/61.711)
+const aspectRatio = 80 / 61.711;
+const finalWidth = responsive ? undefined : width;
+const finalHeight = responsive ? undefined : height;
+
+// Si és responsive i no hi ha responsiveWidth, utilitza 100%
+const widthValue = responsive ? responsiveWidth || "100%" : undefined;
+const maxHeightValue = responsiveMaxHeight
+  ? `max-height: ${responsiveMaxHeight};`
+  : "";
 ---
 
 <svg
@@ -19,8 +36,11 @@ const {
   data-bbox="0 -0.004 80 61.711"
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 -0.004 80 61.711"
-  height={height}
-  width={width}
+  height={finalHeight}
+  width={finalWidth}
+  style={responsive
+    ? `width: ${widthValue}; height: auto; aspect-ratio: ${aspectRatio}; ${maxHeightValue}`
+    : undefined}
   data-type="color"
   role="presentation"
   aria-hidden="true"
