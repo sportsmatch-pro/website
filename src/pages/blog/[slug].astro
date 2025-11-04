@@ -90,7 +90,7 @@ console.error("✅ Post data received:", post.title);
         post.content
           .split("\n\n")
           .map((paragraph, index) => (
-            <p class="mb-4 leading-relaxed">{paragraph}</p>
+            <p class="mb-4 leading-relaxed" set:html={paragraph} />
           ))
       }
     </div>
