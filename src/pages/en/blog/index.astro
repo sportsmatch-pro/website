@@ -1,32 +1,10 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
+import BlogIndex from "../../../components/BlogIndex.astro";
 
-const res = await fetch(import.meta.env.API_BASE_URL + "articles?language=en");
-const posts = await res.json();
+const currentLang = "en";
 ---
 
-<Layout title="SportsMatch - Últims posts" currentLang="en">
-  <h1 class="text-3xl font-bold mb-6">Últims posts esportius</h1>
-
-  {
-    posts.length === 0 ? (
-      <p>
-        No s'han trobat posts. Assegura't que l'API retorna dades correctament.
-      </p>
-    ) : (
-      <ul class="space-y-6">
-        {posts.map((post) => (
-          <li class="border border-gray-300 rounded p-4 shadow hover:shadow-md transition">
-            <a
-              href={`/blog/${post.slug}`}
-              class="text-xl font-semibold text-blue-600 hover:underline"
-            >
-              {post.title}
-            </a>
-            <p class="text-gray-600 mt-2">{post.description}</p>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+<Layout title="Sports Blog" currentLang={currentLang}>
+  <BlogIndex currentLang={currentLang} blogBasePath="/en/blog" />
 </Layout>
