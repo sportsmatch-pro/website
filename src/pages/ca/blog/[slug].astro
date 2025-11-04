@@ -93,4 +93,24 @@ console.error("✅ Post data received:", post.title);
       }
     </div>
   </article>
+
+  <!-- Script de Twitter per renderitzar els embeds -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"
+  ></script>
+
+  <script is:inline>
+    // Assegurar que els widgets de Twitter es carreguen després que el DOM estigui llest
+    window.addEventListener("load", () => {
+      if (window.twttr && window.twttr.widgets) {
+        window.twttr.widgets.load();
+      }
+    });
+
+    // També intentar carregar quan el script estigui disponible
+    if (typeof window.twttr !== "undefined") {
+      window.twttr.ready(() => {
+        window.twttr.widgets.load();
+      });
+    }
+  </script>
 </Layout>

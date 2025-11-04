@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { processTweetEmbeds } from "../../utils/tweetEmbed";
 
 interface Post {
   id: string;
@@ -32,6 +33,9 @@ const { post, allPosts } = Astro.props as { post: Post; allPosts: Post[] };
 
 console.error(" Building route for slug:", post.slug);
 console.error("✅ Post data received:", post.title);
+
+// Processar el contingut per convertir tweets
+const processedContent = processTweetEmbeds(post.content);
 
 // Traduccions
 const translations = {
@@ -94,8 +98,27 @@ const t = translations[lang] || translations["es-ES"];
     </div>
     <h1 class="text-4xl font-bold mb-6">{post.title}</h1>
 
-    <div class="article-content" set:html={post.content} />
+    <div class="article-content" set:html={processedContent} />
   </article>
+
+  <!-- Script de Twitter widgets.js per renderitzar els embeds -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"
+  ></script>
+
+  <script is:inline>
+    // Funció per assegurar que els widgets es carreguen correctament
+    window.addEventListener("load", function () {
+      if (typeof window.twttr !== "undefined" && window.twttr.widgets) {
+        // Carregar tots els widgets que no s'han renderitzat encara
+        window.twttr.widgets.load();
+      } else if (typeof window.twttr !== "undefined" && window.twttr.ready) {
+        // Si el script està carregant, esperar a que estigui llest
+        window.twttr.ready(function (twttr) {
+          twttr.widgets.load();
+        });
+      }
+    });
+  </script>
 </Layout>
 
 <style is:global>
@@ -138,5 +161,15 @@ const t = translations[lang] || translations["es-ES"];
     border-radius: 0.5rem !important;
     margin-top: 1rem !important;
     margin-bottom: 1rem !important;
+  }
+  /* Estils per als embeds de Twitter */
+  .article-content blockquote.twitter-tweet {
+    margin: 1.5rem auto !important;
+    max-width: 550px !important;
+    display: block !important;
+    text-align: center !important;
+  }
+  .article-content blockquote.twitter-tweet > * {
+    text-align: left !important;
   }
 </style>
