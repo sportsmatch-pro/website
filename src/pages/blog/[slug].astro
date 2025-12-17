@@ -215,6 +215,7 @@ const t = translations[lang] || translations["es-ES"];
           </p>
         )
       }
+      { console.log(t.locale}
     </div>
     <h1 class="text-4xl font-bold mb-6">{post.title}</h1>
 
@@ -273,7 +274,6 @@ const t = translations[lang] || translations["es-ES"];
                     <h3 class="text-xl font-semibold text-gray-800 mb-2 line-clamp-2">
                       {relatedPost.title}
                     </h3>
-
                     <p class="text-gray-600 text-sm line-clamp-3">
                       {relatedPost.excerpt ||
                         relatedPost.content.substring(0, 150) + "..."}
