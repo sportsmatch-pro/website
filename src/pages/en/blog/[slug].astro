@@ -146,7 +146,11 @@ const t = {
         post.publishedAt && (
           <p class="mb-2">
             <strong>Publication date:</strong>{" "}
-            {new Date(post.publishedAt).toLocaleDateString("en-US")}
+            {new Date(post.publishedAt).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         )
       }

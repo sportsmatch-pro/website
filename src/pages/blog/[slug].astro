@@ -211,11 +211,14 @@ const t = translations[lang] || translations["es-ES"];
         post.publishedAt && (
           <p class="mb-2">
             <strong>{t.publicationDate}</strong>{" "}
-            {new Date(post.publishedAt).toLocaleDateString(t.locale)}
+            {new Date(post.publishedAt).toLocaleDateString(t.locale, {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         )
       }
-      { console.log(t.locale}
     </div>
     <h1 class="text-4xl font-bold mb-6">{post.title}</h1>
 
